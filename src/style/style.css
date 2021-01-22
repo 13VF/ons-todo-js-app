@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  background-color: #F2F2F2;
+}
+
+.mainWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.todoControls {
+  margin: 16px 0;
+}
+
+.todoList {
+  width: 100%;
+  max-width: 800px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+.todo.todo--high {
+  background-color: #B0BF3F;
+}
+
+.todo.todo--normal {
+  background-color: #838C3B;
+}
+
+.todo.todo--low {
+  background-color: #BFBBB4;
+}
+
+.todo__text {
+  max-width: 450px;
+}
