@@ -46,3 +46,23 @@ body {
 .todo__text {
   max-width: 450px;
 }
+
+.todo__deadline {
+  margin-top: 8px;
+}
+
+.todo__editMode {
+  display: none;
+}
+
+.todo__buttons {
+  min-width: 100px;
+}
+
+.todo.todo--editEnabled .todo__viewMode {
+  display: none;
+}
+
+.todo.todo--editEnabled .todo__editMode {
+  display: flex;
+}

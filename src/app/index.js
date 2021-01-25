@@ -1,4 +1,4 @@
-import { createNewTodoItem } from './todo';
+import { TodoItem, createNewTodoItem, createTodoElementHTML } from './todo';
 
 const selectElement = document.querySelector('.todoControls__prioritySelect');
 const textInputElement = document.querySelector('.todoControls__textInput');
@@ -7,46 +7,92 @@ const addButtonElement = document.querySelector('.todoControls__addButton');
 const todoListElement = document.querySelector('.todoList');
 
 
-const todoListTasks = [];
+const todoListTasks = [
+  new TodoItem({
+    priority: 2,
+    text: 'Купить еды черепахе',
+    deadline: '28.01.2021'
+  }),
+  new TodoItem({
+    priority: 1,
+    text: 'Купить еды коту',
+    deadline: '26.01.2021'
+  }),
+  new TodoItem({
+    priority: 3,
+    text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi, voluptates.',
+    deadline: '30.01.2021'
+  })
+];
 
 
 function addButtonHandler() {
   const newTodoItem = createNewTodoItem(selectElement, textInputElement, dateInputElement);
   
-  todoListTasks.push(newTodoItem);
-  renderTodoItem(newTodoItem);
+  todoListTasks.unshift(newTodoItem);
+
+  renderItemList();
 }
+
+function todoItemClickHandler(event) {
+  event.stopPropagation();
+  event.preventDefault();
+
+  const { target } = event;
+  const { classList } = target;
+  const isDeleteButton = classList.contains('todo__buttonDelete');
+  const isEditButton = classList.contains('todo__buttonEdit');
+  const isSaveButton = classList.contains('todo__editModeButton');
+  
+  const todoElement = target.closest('.todo');
+  const todoId = todoElement && todoElement.dataset.id;
+
+  if (isDeleteButton) {
+    const index = todoListTasks.findIndex( todoItem => todoItem.id === Number.parseInt(todoId) );
+
+    todoListTasks.splice(index, 1);
+    todoElement.remove();
+  }
+
+  if (isEditButton) {
+    todoElement.classList.toggle('todo--editEnabled');
+    const input = todoElement.querySelector('.todo__editModeInput');
+    const valueBefore = todoElement.querySelector('.todo__text').textContent;
+    input.value = valueBefore;
+  }
+
+  if (isSaveButton) {
+    const input = todoElement.querySelector('.todo__editModeInput');
+    const valueToSet = input.value;
+
+    if (!valueToSet.length) {
+      return;
+    }
+
+    todoElement.classList.toggle('todo--editEnabled');
+    const textInputElement = todoElement.querySelector('.todo__text');
+    textInputElement.textContent = valueToSet;
+  }
+}
+
+
 
 // обработчики кнопки добавления новой задачи
 addButtonElement.addEventListener('click', addButtonHandler);
 
-const todoMods = {
-  1: 'todo--high',
-  2: 'todo--normal',
-  3: 'todo--low'
-};
+// обработчики удаляющие существующую задачу
+// обработчики которые позволяют отредактировать задачу
+todoListElement.addEventListener('click', todoItemClickHandler);
 
-// функция которая отрисует в DOM весь список задач
-function renderTodoItem(todoItem) {
-  const {priority, text, deadline, createDate} = todoItem;
-
-  todoListElement.insertAdjacentHTML('afterbegin', `
-    <div class="todo ${todoMods[priority]}" data-id="${createDate}">
-      <div class="todo__text">${text}</div>
-      <div class="todo__deadline">${deadline}</div>
-      <div class="todo__buttons">
-        <button class="todo__buttonEdit">Edit</button>
-        <button class="todo__buttonDelete">Delete</button>
-      </div>
-    </div>
-  `);
+// функция рисующая весь список задач
+function renderItemList() {
+  const tasksToRender = todoListTasks.map( todo => createTodoElementHTML(todo) );
+  todoListElement.innerHTML = tasksToRender.join('');
 }
 
-
-
-
 // функция запускающая всё приложение
+function initApplication() {
+  renderItemList();
+}
 
-// обработчики удаляющие существующую задачу
-
-// обработчики которые позволяют отредактировать задачу
+initApplication();
